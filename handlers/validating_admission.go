@@ -4,19 +4,22 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/flavio/kube-image-bouncer/rules"
+	"kube-image-bouncer/rules"
 
 	"github.com/labstack/echo"
-	"k8s.io/api/admission/v1beta1"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	admissionv1 "k8s.io/api/admission/v1"
 )
 
+// RegistryWhitelist Declaraion
 var RegistryWhitelist []string
 
+// PostValidatingAdmission Example
 func PostValidatingAdmission() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var admissionReview v1beta1.AdmissionReview
+		var admissionReview admissionv1.AdmissionReview
 
 		err := c.Bind(&admissionReview)
 		if err != nil {
@@ -32,9 +35,12 @@ func PostValidatingAdmission() echo.HandlerFunc {
 		}
 		c.Logger().Debugf("pod: %+v", pod)
 
-		var admissionReviewResponse v1beta1.AdmissionReview
-		admissionReviewResponse.Response = new(v1beta1.AdmissionResponse)
+		var admissionReviewResponse admissionv1.AdmissionReview
+		admissionReviewResponse.Response = new(admissionv1.AdmissionResponse)
 		admissionReviewResponse.Response.Allowed = true
+		admissionReviewResponse.Response.UID = admissionReview.Request.UID
+		admissionReviewResponse.Kind = admissionReview.Kind
+		admissionReviewResponse.APIVersion = admissionReview.APIVersion
 		images := []string{}
 
 		for _, container := range pod.Spec.Containers {

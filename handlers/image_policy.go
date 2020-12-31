@@ -3,12 +3,13 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/flavio/kube-image-bouncer/rules"
+	"kube-image-bouncer/rules"
 
 	"github.com/labstack/echo"
 	"k8s.io/api/imagepolicy/v1alpha1"
 )
 
+// PostImagePolicy Example
 func PostImagePolicy() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var imageReview v1alpha1.ImageReview
