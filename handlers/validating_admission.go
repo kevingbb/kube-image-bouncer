@@ -39,8 +39,7 @@ func PostValidatingAdmission() echo.HandlerFunc {
 		admissionReviewResponse.Response = new(admissionv1.AdmissionResponse)
 		admissionReviewResponse.Response.Allowed = true
 		admissionReviewResponse.Response.UID = admissionReview.Request.UID
-		admissionReviewResponse.Kind = admissionReview.Kind
-		admissionReviewResponse.APIVersion = admissionReview.APIVersion
+		admissionReviewResponse.TypeMeta = admissionReview.TypeMeta
 		images := []string{}
 
 		for _, container := range pod.Spec.Containers {
